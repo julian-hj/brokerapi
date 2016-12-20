@@ -290,6 +290,9 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 
+			logger.Info("BrokerAPI_Logging:%s", lager.Data{"Marshaling": vol.Device.MountConfig})
+			logger.Info("BrokerAPI_Logging_Marshal:%s", lager.Data{"Marshaled": experimentalConfig})
+
 			experimentalVols = append(experimentalVols, ExperimentalVolumeMount{
 				ContainerPath: vol.ContainerDir,
 				Mode:          vol.Mode,
