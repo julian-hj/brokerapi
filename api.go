@@ -241,6 +241,8 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 		instanceIDLogKey: instanceID,
 		bindingIDLogKey:  bindingID,
 	})
+	logger.Info("start")
+	defer logger.Info("end")
 
 	var details BindDetails
 	if err := json.NewDecoder(req.Body).Decode(&details); err != nil {
