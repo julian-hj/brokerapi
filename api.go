@@ -8,6 +8,7 @@ import (
 	"code.cloudfoundry.org/lager"
 	"github.com/gorilla/mux"
 	"github.com/pivotal-cf/brokerapi/auth"
+	"fmt"
 )
 
 const provisionLogKey = "provision"
@@ -281,8 +282,10 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 	}
 
 	brokerAPIVersion := req.Header.Get("X-Broker-Api-Version")
+	logger.Info(fmt.Sprintf("BrokerAPIVersionCheck"))
 	if brokerAPIVersion == "2.8" || brokerAPIVersion == "2.9" {
 		experimentalVols := []ExperimentalVolumeMount{}
+		logger.Info(fmt.Sprintf("BrokerVolumeMounts"))
 
 		for _, vol := range binding.VolumeMounts {
 			experimentalConfig, err := json.Marshal(vol.Device.MountConfig)
@@ -292,6 +295,7 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 
+			logger.Info(fmt.Sprintf("BrokerPrinting Before:%s After:%s", vol.Device.MountConfig, string(experimentalConfig))
 			logger.Info("BrokerAPI_Logging:%s", lager.Data{"Marshaling": vol.Device.MountConfig})
 			logger.Info("BrokerAPI_Logging_Marshal:%s", lager.Data{"Marshaled": experimentalConfig})
 
