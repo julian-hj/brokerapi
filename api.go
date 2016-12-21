@@ -423,7 +423,6 @@ func (h serviceBrokerHandler) respondWithLogging(w http.ResponseWriter, status i
 	logger.Info("Running-Mount-Response-With-Logging" + EscapedToString(fmt.Sprintf("%v", response)))
 
 	encoder := json.NewEncoder(w)
-	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(response)
 	if err != nil {
 		h.logger.Error("encoding response", err, lager.Data{"status": status, "response": response})
