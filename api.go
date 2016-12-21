@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pivotal-cf/brokerapi/auth"
 	"fmt"
+	"strings"
 )
 
 const provisionLogKey = "provision"
@@ -287,6 +288,7 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 
 	brokerAPIVersion := req.Header.Get("X-Broker-Api-Version")
 	logger.Info(fmt.Sprintf("BrokerAPIVersionCheck"))
+	logger.Info(EscapedToString(binding))
 	if brokerAPIVersion == "2.8" || brokerAPIVersion == "2.9" {
 		experimentalVols := []ExperimentalVolumeMount{}
 		logger.Info(fmt.Sprintf("BrokerVolumeMounts"))
@@ -418,13 +420,24 @@ func (h serviceBrokerHandler) respond(w http.ResponseWriter, status int, respons
 func (h serviceBrokerHandler) respondWithLogging(w http.ResponseWriter, status int, response interface{}, logger lager.Logger) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	logger.Info("Running-Mount-Response-With-Logging")
-	logger.Info(fmt.Sprintf("%v", response))
+	logger.Info("Running-Mount-Response-With-Logging" + EscapedToString(fmt.Sprintf("%v", response)))
 
 	encoder := json.NewEncoder(w)
 	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(response)
 	if err != nil {
 		h.logger.Error("encoding response", err, lager.Data{"status": status, "response": response})
+	}
+}
+
+func EscapedToString(source string) string {
+	if strings.Contains(source, "\\u0026") {
+		return "Double Escaped"
+	} else if strings.Contains(source, "\u0026") {
+		return "Single Escaped"
+	} else if strings.Contains(source, "&") {
+		return "UnEscaped"
+	} else {
+		return "Not Found"
 	}
 }
