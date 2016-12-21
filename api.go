@@ -316,11 +316,11 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 			SyslogDrainURL:  binding.SyslogDrainURL,
 			VolumeMounts:    experimentalVols,
 		}
-		h.respond(w, http.StatusCreated, experimentalBinding)
+		h.respondWithLogging(w, http.StatusCreated, experimentalBinding, logger)
 		return
 	}
 
-	h.respond(w, http.StatusCreated, binding)
+	h.respondWithLogging(w, http.StatusCreated, binding, logger)
 }
 
 func (h serviceBrokerHandler) unbind(w http.ResponseWriter, req *http.Request) {
@@ -405,6 +405,20 @@ func (h serviceBrokerHandler) respond(w http.ResponseWriter, status int, respons
 	encoder := json.NewEncoder(w)
 	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(response)
+	if err != nil {
+		h.logger.Error("encoding response", err, lager.Data{"status": status, "response": response})
+	}
+}
+
+func (h serviceBrokerHandler) respondWithLogging(w http.ResponseWriter, status int, response interface{}, logger lager.Logger) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	logger.Info(fmt.Sprintf("%v", response))
+
+	encoder := json.NewEncoder(w)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(response)
+	logger.Info(fmt.Sprintf("%v", response))
 	if err != nil {
 		h.logger.Error("encoding response", err, lager.Data{"status": status, "response": response})
 	}
