@@ -288,7 +288,7 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 
 	brokerAPIVersion := req.Header.Get("X-Broker-Api-Version")
 	logger.Info(fmt.Sprintf("BrokerAPIVersionCheck"))
-	logger.Info(EscapedToString(binding))
+	logger.Info(EscapedToString(fmt.Sprintf("%v", binding)))
 	if brokerAPIVersion == "2.8" || brokerAPIVersion == "2.9" {
 		experimentalVols := []ExperimentalVolumeMount{}
 		logger.Info(fmt.Sprintf("BrokerVolumeMounts"))
