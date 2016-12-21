@@ -320,6 +320,7 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	logger.Info("Starting-Mount-Response-With-Logging")
 	h.respondWithLogging(w, http.StatusCreated, binding, logger)
 }
 
@@ -413,6 +414,7 @@ func (h serviceBrokerHandler) respond(w http.ResponseWriter, status int, respons
 func (h serviceBrokerHandler) respondWithLogging(w http.ResponseWriter, status int, response interface{}, logger lager.Logger) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
+	logger.Info("Running-Mount-Response-With-Logging")
 	logger.Info(fmt.Sprintf("%v", response))
 
 	encoder := json.NewEncoder(w)
