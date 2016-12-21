@@ -281,6 +281,8 @@ func (h serviceBrokerHandler) bind(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	logger.Info(fmt.Sprintf("%s", string(binding.VolumeMounts[0].Device.MountConfig)))
+
 	logger.Info("BrokerAPI_Logging_PostBind", lager.Data{"Marshaling": binding})
 
 	brokerAPIVersion := req.Header.Get("X-Broker-Api-Version")
@@ -422,7 +424,6 @@ func (h serviceBrokerHandler) respondWithLogging(w http.ResponseWriter, status i
 	encoder := json.NewEncoder(w)
 	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(response)
-	logger.Info(fmt.Sprintf("%v", response))
 	if err != nil {
 		h.logger.Error("encoding response", err, lager.Data{"status": status, "response": response})
 	}
